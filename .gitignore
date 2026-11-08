@@ -1,0 +1,24 @@
+# Virtual Environment
+venv/
+env/
+ENV/
+.env
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.sqlite3
+
+# Instance & Database files (keep repo clean)
+instance/
+*.db
+
+# Uploaded media (optional, or keep if you want placeholder uploads tracked)
+static/uploads/*
+!static/uploads/.gitkeep
+
+# IDE / Editor
+.vscode/
+.idea/
+*.swp

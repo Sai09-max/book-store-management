@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 560" width="100%" height="100%">
+  <defs>
+    <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#4f46e5;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#7c3aed;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="spine" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#000000;stop-opacity:0.35" />
+      <stop offset="100%" style="stop-color:#ffffff;stop-opacity:0.1" />
+    </linearGradient>
+  </defs>
+  <rect width="400" height="560" rx="16" fill="url(#grad)" />
+  <rect width="28" height="560" rx="4" fill="url(#spine)" />
+  <g fill="#ffffff" opacity="0.9" transform="translate(140, 200)">
+    <path d="M12 60.5C9.5 60.5 7.1 61.5 5.3 63.3C3.5 65.1 2.5 67.5 2.5 70V17.5C2.5 15.01 3.51 12.63 5.27 10.87C7.03 9.11 9.41 8.1 11.9 8.1L57.5 8.1C64.6 8.1 71.5 10.9 76.5 15.9C81.5 10.9 88.4 8.1 95.5 8.1L141.1 8.1C143.6 8.1 146 9.11 147.7 10.87C149.5 12.63 150.5 15.01 150.5 17.5V70C150.5 67.5 149.5 65.1 147.7 63.3C145.9 61.5 143.5 60.5 141 60.5L95.5 60.5C88.4 60.5 81.5 63.3 76.5 68.3C71.5 63.3 64.6 60.5 57.5 60.5L12 60.5Z" stroke="#ffffff" stroke-width="6" fill="none" stroke-linejoin="round"/>
+    <path d="M76.5 68.3V16" stroke="#ffffff" stroke-width="6" stroke-linecap="round"/>
+  </g>
+  <text x="200" y="360" font-family="'Segoe UI', Roboto, Helvetica, sans-serif" font-size="24" font-weight="bold" fill="#ffffff" text-anchor="middle" letter-spacing="1">BOOK STORE</text>
+  <text x="200" y="395" font-family="'Segoe UI', Roboto, Helvetica, sans-serif" font-size="14" fill="#e0e7ff" text-anchor="middle" opacity="0.85">Special Edition Edition</text>
+  <line x1="80" y1="420" x2="320" y2="420" stroke="#ffffff" stroke-width="1.5" opacity="0.4" />
+</svg>

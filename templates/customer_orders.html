@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block title %}My Order History{% endblock %}
+
+{% block content %}
+<div class="row mb-4 align-items-center">
+  <div class="col-md-8">
+    <div class="d-inline-flex align-items-center gap-2 px-3 py-1 mb-2 rounded-pill bg-primary bg-opacity-10 text-primary fw-medium small">
+      <i class="bi bi-clock-history"></i> Customer Portal
+    </div>
+    <h2 class="fw-bold mb-1">My Orders & Receipts</h2>
+    <p class="text-secondary small mb-0">View all past purchases, check bill details, and download or print tax invoices.</p>
+  </div>
+  <div class="col-md-4 text-md-end">
+    <a href="{{ url_for('index') }}" class="btn btn-outline-primary rounded-pill px-4">
+      <i class="bi bi-cart-plus me-1"></i> Continue Shopping
+    </a>
+  </div>
+</div>
+
+<div class="card border-0 shadow-sm rounded-4 p-4">
+  {% if orders %}
+    <div class="table-responsive">
+      <table class="table table-hover align-middle">
+        <thead class="table-light small">
+          <tr>
+            <th>Invoice Number</th>
+            <th>Purchase Date</th>
+            <th>Items Ordered</th>
+            <th>Total Amount</th>
+            <th>Order Status</th>
+            <th class="text-end">Invoice / Receipt</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for o in orders %}
+            <tr>
+              <td class="fw-bold text-dark">{{ o.invoice_no }}</td>
+              <td class="small text-secondary">{{ o.created_at.strftime('%d %B %Y, %I:%M %p') }}</td>
+              <td>
+                <span class="badge bg-light text-dark border rounded-pill px-3 py-1 me-2">{{ o.items|length }} book(s)</span>
+                <span class="small text-muted text-truncate d-inline-block" style="max-width: 250px;">
+                  {% for item in o.items %}
+                    {{ item.book_title }}{% if not loop.last %}, {% endif %}
+                  {% endfor %}
+                </span>
+              </td>
+              <td class="fw-bold text-success">₹{{ "%.2f"|format(o.net_amount) }}</td>
+              <td>
+                <span class="badge {% if o.status == 'Completed' %}bg-success{% elif o.status == 'Partially Returned' %}bg-warning text-dark{% else %}bg-danger{% endif %} rounded-pill">
+                  {{ o.status }}
+                </span>
+              </td>
+              <td class="text-end">
+                <a href="{{ url_for('invoice_view', invoice_no=o.invoice_no) }}" class="btn btn-sm btn-outline-primary rounded-pill px-3 fw-semibold">
+                  <i class="bi bi-receipt me-1"></i> View Receipt
+                </a>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <div class="py-5 text-center text-muted">
+      <i class="bi bi-bag-x fs-1 opacity-25 mb-3 d-block"></i>
+      <h5 class="fw-bold">No orders found</h5>
+      <p class="text-secondary small mb-3">You haven't placed any book orders yet.</p>
+      <a href="{{ url_for('index') }}" class="btn btn-primary rounded-pill px-4">Browse Book Catalog</a>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

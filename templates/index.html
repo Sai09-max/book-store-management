@@ -1,0 +1,309 @@
+{% extends "base.html" %}
+{% block title %}Book Catalog{% endblock %}
+
+{% block content %}
+
+<!-- ══════════════════════════════════════════════════
+     HERO SECTION
+══════════════════════════════════════════════════ -->
+<div class="hero-wrap mb-4">
+  <!-- Animated orbs -->
+  <div class="hero-orb hero-orb-1"></div>
+  <div class="hero-orb hero-orb-2"></div>
+  <div class="hero-orb hero-orb-3"></div>
+
+  <div class="row align-items-center g-4 position-relative" style="z-index:1;">
+    <div class="col-lg-8">
+      <!-- Eyebrow -->
+      <div class="hero-eyebrow">
+        <i class="bi bi-stars"></i>
+        Automated BookStore Management System
+      </div>
+
+      <!-- Title -->
+      <h1 class="hero-title">
+        Discover <span>Academic</span> &amp;<br>Tech Literature
+      </h1>
+
+      <p class="hero-sub">
+        Search university textbooks, engineering handbooks, and bestsellers with live inventory tracking, automatic student discounts, and instant GST billing.
+      </p>
+
+      <!-- Search bar -->
+      <form method="GET" action="{{ url_for('index') }}">
+        <div class="hero-search">
+          <i class="bi bi-search text-muted"></i>
+          <input type="text" name="q" value="{{ query }}"
+                 placeholder="Search by title, author, keyword… (e.g. Clean Code, DBMS)">
+          <button type="submit" class="btn-search">
+            <i class="bi bi-arrow-right-circle-fill"></i> Search
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Stats Card -->
+    <div class="col-lg-4">
+      <div class="hero-stats-card">
+        <div class="hero-stat-row">
+          <div class="hero-stat-icon" style="background:rgba(240,165,0,.2);">
+            <i class="bi bi-journal-bookmark-fill" style="color:var(--c-gold-light);"></i>
+          </div>
+          <div>
+            <div class="hero-stat-num">{{ total_count }}</div>
+            <div class="hero-stat-lbl">Curated Titles in Inventory</div>
+          </div>
+        </div>
+        <hr class="hero-divider">
+        <div class="hero-stat-row">
+          <div class="hero-stat-icon" style="background:rgba(14,165,122,.2);">
+            <i class="bi bi-lightning-charge-fill" style="color:#6ee7b7;"></i>
+          </div>
+          <div>
+            <div class="hero-stat-num">POS Ready</div>
+            <div class="hero-stat-lbl">Instant Stock Decrement</div>
+          </div>
+        </div>
+        <hr class="hero-divider">
+        <div class="hero-stat-row">
+          <div class="hero-stat-icon" style="background:rgba(103,232,249,.15);">
+            <i class="bi bi-graph-up-arrow" style="color:#67e8f9;"></i>
+          </div>
+          <div>
+            <div class="hero-stat-num">Live</div>
+            <div class="hero-stat-lbl">Real‑time Analytics</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════
+     PERK BADGES
+══════════════════════════════════════════════════ -->
+<div class="row g-3 mb-4">
+  <div class="col-6 col-md-3">
+    <div class="perk-card">
+      <div class="perk-icon" style="background:#ede9fe;">
+        <i class="bi bi-patch-check-fill" style="color:#7c3aed;"></i>
+      </div>
+      <div>
+        <div class="fw-bold small">Genuine Editions</div>
+        <div class="text-muted" style="font-size:.74rem;">Verified academic publishers</div>
+      </div>
+    </div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="perk-card">
+      <div class="perk-icon" style="background:#d1fae5;">
+        <i class="bi bi-tag-fill" style="color:#059669;"></i>
+      </div>
+      <div>
+        <div class="fw-bold small">Campus Discount</div>
+        <div class="text-muted" style="font-size:.74rem;">5% off on orders ≥ ₹1,000</div>
+      </div>
+    </div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="perk-card">
+      <div class="perk-icon" style="background:#fef3c7;">
+        <i class="bi bi-arrow-counterclockwise" style="color:#d97706;"></i>
+      </div>
+      <div>
+        <div class="fw-bold small">Easy 7‑Day Returns</div>
+        <div class="text-muted" style="font-size:.74rem;">Auto inventory restock</div>
+      </div>
+    </div>
+  </div>
+  <div class="col-6 col-md-3">
+    <div class="perk-card">
+      <div class="perk-icon" style="background:#cffafe;">
+        <i class="bi bi-receipt" style="color:#0891b2;"></i>
+      </div>
+      <div>
+        <div class="fw-bold small">Tax Invoice Receipt</div>
+        <div class="text-muted" style="font-size:.74rem;">Automated GST breakdown</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════
+     CATEGORY PILLS
+══════════════════════════════════════════════════ -->
+<div class="d-flex align-items-center gap-2 mb-3">
+  <span class="section-label me-1">Categories</span>
+  <div class="cat-scroll flex-grow-1">
+    <a href="{{ url_for('index', q=query, stock=stock_filter, sort=current_sort) }}"
+       class="cat-pill cat-pill-all {% if not selected_category %}active-cat{% endif %}">
+      All ({{ total_count }})
+    </a>
+    {% for cat in categories %}
+      <a href="{{ url_for('index', category=cat.id, q=query, stock=stock_filter, sort=current_sort) }}"
+         class="cat-pill {% if selected_category == cat.id %}active-cat{% endif %}">
+        {{ cat.name }}
+        <span class="ms-1 px-2 py-0 rounded-pill" style="background:rgba(91,79,207,.12);font-size:.7rem;">{{ cat.books|length }}</span>
+      </a>
+    {% endfor %}
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════
+     FILTER & SORT BAR
+══════════════════════════════════════════════════ -->
+<div class="filter-bar mb-4">
+  <div class="row g-3 align-items-center justify-content-between">
+    <div class="col-md-7 d-flex align-items-center gap-2 flex-wrap">
+      <span class="small fw-semibold text-muted">Availability:</span>
+      <div class="btn-group btn-group-sm">
+        <a href="{{ url_for('index', category=selected_category, q=query, sort=current_sort) }}"
+           class="btn btn-outline-secondary {% if not stock_filter %}active{% endif %} rounded-start-pill">All Books</a>
+        <a href="{{ url_for('index', category=selected_category, q=query, stock='available', sort=current_sort) }}"
+           class="btn btn-outline-secondary {% if stock_filter == 'available' %}active{% endif %}">
+          <span class="dot-pulse me-1" style="width:7px;height:7px;background:#10b981;display:inline-block;border-radius:50%;vertical-align:middle;"></span>
+          In Stock
+        </a>
+        <a href="{{ url_for('index', category=selected_category, q=query, stock='low', sort=current_sort) }}"
+           class="btn btn-outline-secondary {% if stock_filter == 'low' %}active{% endif %} rounded-end-pill">
+          <span class="me-1" style="width:7px;height:7px;background:#f59e0b;display:inline-block;border-radius:50%;vertical-align:middle;"></span>
+          Low Stock
+        </a>
+      </div>
+      {% if query or selected_category or stock_filter %}
+        <a href="{{ url_for('index') }}" class="btn btn-sm btn-link text-danger text-decoration-none small">
+          <i class="bi bi-x-circle me-1"></i>Clear Filters
+        </a>
+      {% endif %}
+    </div>
+    <div class="col-md-5 d-flex align-items-center justify-content-md-end gap-2">
+      <span class="small text-muted">Sort by:</span>
+      <div class="btn-group btn-group-sm">
+        <a href="{{ url_for('index', q=query, category=selected_category, stock=stock_filter, sort='popular') }}"
+           class="btn btn-outline-secondary {% if current_sort == 'popular' %}active{% endif %} rounded-start-pill">Default</a>
+        <a href="{{ url_for('index', q=query, category=selected_category, stock=stock_filter, sort='price_asc') }}"
+           class="btn btn-outline-secondary {% if current_sort == 'price_asc' %}active{% endif %}">Price ↑</a>
+        <a href="{{ url_for('index', q=query, category=selected_category, stock=stock_filter, sort='price_desc') }}"
+           class="btn btn-outline-secondary {% if current_sort == 'price_desc' %}active{% endif %} rounded-end-pill">Price ↓</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════
+     BOOKS GRID
+══════════════════════════════════════════════════ -->
+<div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4 mb-5">
+  {% for book in books %}
+  <div class="col">
+    <div class="book-card">
+
+      <!-- Cover -->
+      <div class="book-cover">
+        {% if book.image_url %}
+          <img src="{{ book.image_url }}" alt="{{ book.title }}">
+        {% else %}
+          <div class="no-img-ph"><i class="bi bi-journal-richtext"></i></div>
+        {% endif %}
+
+        <!-- Category badge -->
+        <span class="badge-cat">
+          {{ book.category_rel.name if book.category_rel else 'General' }}
+        </span>
+
+        <!-- Stock badge -->
+        {% if book.stock <= 0 %}
+          <span class="badge-stock badge-out">Out of Stock</span>
+        {% elif book.is_low_stock %}
+          <span class="badge-stock badge-low">
+            <span class="dot-pulse" style="width:6px;height:6px;background:#fff;display:inline-block;border-radius:50%;vertical-align:middle;margin-right:4px;"></span>
+            Only {{ book.stock }} left
+          </span>
+        {% else %}
+          <span class="badge-stock badge-instock">
+            <span class="dot-pulse" style="width:6px;height:6px;background:#fff;display:inline-block;border-radius:50%;vertical-align:middle;margin-right:4px;"></span>
+            In Stock ({{ book.stock }})
+          </span>
+        {% endif %}
+
+        <!-- Quick View overlay -->
+        <div class="book-cover-overlay">
+          <a href="{{ url_for('book_detail', book_id=book.id) }}" class="btn-quick-view">
+            <i class="bi bi-eye"></i> Quick View
+          </a>
+        </div>
+      </div>
+
+      <!-- Body -->
+      <div class="book-body">
+        <div class="book-author"><i class="bi bi-pen me-1"></i>{{ book.author }}</div>
+        <div class="book-title">
+          <a href="{{ url_for('book_detail', book_id=book.id) }}">{{ book.title }}</a>
+        </div>
+
+        <!-- Stars -->
+        <div class="stars">
+          {% for i in range(5) %}
+            <i class="bi bi-star{% if loop.index <= book.rating|int %}-fill{% elif (book.rating - loop.index + 1) > 0 %}-half{% endif %} s-filled"></i>
+          {% endfor %}
+          <span class="s-num ms-1">{{ book.rating }}</span>
+          <span class="s-count">({{ book.reviews_count }})</span>
+          {% if book.supplier_rel %}
+            <span class="ms-auto text-muted text-truncate" style="max-width:90px;font-size:.72rem;" title="{{ book.supplier_rel.name }}">
+              &bull; {{ book.supplier_rel.name }}
+            </span>
+          {% endif %}
+        </div>
+
+        <!-- Footer: Price + Actions -->
+        <div class="book-footer">
+          <div>
+            <div class="book-price-label">Campus Price</div>
+            <div class="book-price">₹{{ "%.2f"|format(book.price) }}</div>
+          </div>
+          <div class="d-flex gap-2 align-items-center">
+            {% if book.stock > 0 %}
+              <form action="{{ url_for('quick_add', book_id=book.id) }}" method="POST">
+                <button type="submit" class="btn-add-cart" title="Add to Cart">
+                  <i class="bi bi-bag-plus"></i>
+                </button>
+              </form>
+              {% if current_user.is_authenticated and current_user.is_staff %}
+                <form action="{{ url_for('staff_pos_add', book_id=book.id) }}" method="POST">
+                  <button type="submit" class="btn-add-pos" title="Add to POS">
+                    <i class="bi bi-calculator"></i>
+                  </button>
+                </form>
+              {% endif %}
+              <a href="{{ url_for('book_detail', book_id=book.id) }}"
+                 class="btn-add-cart" style="border-color:rgba(91,79,207,.25);color:var(--c-muted);"
+                 title="View Details">
+                <i class="bi bi-arrow-right"></i>
+              </a>
+            {% else %}
+              <button class="btn btn-secondary btn-sm rounded-pill px-3 disabled" disabled>Sold Out</button>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+  {% else %}
+  <div class="col-12">
+    <div class="empty-state">
+      <i class="bi bi-search d-block mb-3"></i>
+      <h4 class="fw-bold">No Books Found</h4>
+      <p class="text-muted" style="max-width:420px;margin:0 auto;">
+        We couldn't find any books matching your search or filter criteria.
+      </p>
+      <a href="{{ url_for('index') }}" class="btn mt-3 rounded-pill px-4 py-2 fw-bold text-white"
+         style="background:linear-gradient(135deg,var(--c-brand),var(--c-brand-light));">
+        Reset Filters
+      </a>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+{% endblock %}
