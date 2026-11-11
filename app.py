@@ -252,127 +252,239 @@ def init_db():
     db.session.commit()
 
     # 4. Seed Books
-    if Book.query.count() == 0:
-        c_eng = Category.query.filter_by(name="Engineering").first()
-        c_prog = Category.query.filter_by(name="Programming").first()
-        c_cs = Category.query.filter_by(name="Computer Science").first()
-        c_algo = Category.query.filter_by(name="Algorithms").first()
-        c_db = Category.query.filter_by(name="Database").first()
-        c_self = Category.query.filter_by(name="Self-Help").first()
-        c_fin = Category.query.filter_by(name="Finance").first()
+    c_eng = Category.query.filter_by(name="Engineering").first()
+    c_prog = Category.query.filter_by(name="Programming").first()
+    c_cs = Category.query.filter_by(name="Computer Science").first()
+    c_algo = Category.query.filter_by(name="Algorithms").first()
+    c_db = Category.query.filter_by(name="Database").first()
+    c_self = Category.query.filter_by(name="Self-Help").first()
+    c_fin = Category.query.filter_by(name="Finance").first()
 
-        s_pearson = Supplier.query.filter_by(name="Pearson Education").first()
-        s_mcgraw = Supplier.query.filter_by(name="McGraw-Hill Education").first()
-        s_oreilly = Supplier.query.filter_by(name="O'Reilly Media").first()
+    s_pearson = Supplier.query.filter_by(name="Pearson Education").first()
+    s_mcgraw = Supplier.query.filter_by(name="McGraw-Hill Education").first()
+    s_oreilly = Supplier.query.filter_by(name="O'Reilly Media").first()
+    s_oxford = Supplier.query.filter_by(name="Oxford University Press").first()
 
-        books_data = [
-            Book(
-                title="Software Engineering: A Practitioner's Approach",
-                author="Roger S. Pressman",
-                category_id=c_eng.id,
-                supplier_id=s_mcgraw.id,
-                price=500.0,
-                stock=18,
-                min_stock_alert=10,
-                rating=4.9,
-                reviews_count=128,
-                description="Comprehensive guide covering agile development, software architecture, quality assurance, requirement gathering, and cost estimation.",
-                image_url="https://images.unsplash.com/photo-1532012164546-f432f2e3777a?auto=format&fit=crop&w=700&q=80"
-            ),
-            Book(
-                title="Clean Code: A Handbook of Agile Software Craftsmanship",
-                author="Robert C. Martin",
-                category_id=c_prog.id,
-                supplier_id=s_pearson.id,
-                price=650.0,
-                stock=25,
-                min_stock_alert=8,
-                rating=4.8,
-                reviews_count=94,
-                description="Even bad code can function. But if code isn't clean, it can bring a development team to its knees. Master formatting, refactoring, and clean design.",
-                image_url="https://images.unsplash.com/photo-1516979187457-637abb4f9353?auto=format&fit=crop&w=700&q=80"
-            ),
-            Book(
-                title="Design Patterns: Elements of Reusable Object-Oriented Software",
-                author="Erich Gamma, Richard Helm, Ralph Johnson, John Vlissides",
-                category_id=c_eng.id,
-                supplier_id=s_pearson.id,
-                price=720.0,
-                stock=12,
-                min_stock_alert=5,
-                rating=4.9,
-                reviews_count=86,
-                description="Capturing a wealth of experience about the design of object-oriented software, four top-notch designers present a catalog of timeless architectural solutions.",
-                image_url="https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=700&q=80"
-            ),
-            Book(
-                title="Artificial Intelligence: A Modern Approach",
-                author="Stuart Russell, Peter Norvig",
-                category_id=c_cs.id,
-                supplier_id=s_pearson.id,
-                price=850.0,
-                stock=15,
-                min_stock_alert=5,
-                rating=4.9,
-                reviews_count=110,
-                description="The definitive textbook on AI, exploring intelligent agents, heuristic search, logic, probabilistic reasoning, and modern deep learning foundations.",
-                image_url="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=700&q=80"
-            ),
-            Book(
-                title="Atomic Habits: An Easy & Proven Way to Build Good Habits",
-                author="James Clear",
-                category_id=c_self.id,
-                supplier_id=s_oreilly.id,
-                price=450.0,
-                stock=30,
-                min_stock_alert=10,
-                rating=4.9,
-                reviews_count=350,
-                description="An easy and proven way to build good habits and break bad ones. Transform your daily routines with remarkable atomic changes.",
-                image_url="https://images.unsplash.com/photo-1544947950-fa07a98d237f?auto=format&fit=crop&w=700&q=80"
-            ),
-            Book(
-                title="Database System Concepts",
-                author="Abraham Silberschatz, Henry F. Korth",
-                category_id=c_db.id,
-                supplier_id=s_mcgraw.id,
-                price=580.0,
-                stock=6,  # Low stock test case
-                min_stock_alert=10,
-                rating=4.7,
-                reviews_count=73,
-                description="Fundamental concepts of database management, SQL, relational calculus, transaction processing, indexing, and storage engines.",
-                image_url="https://images.unsplash.com/photo-1512820790803-83ca734da794?auto=format&fit=crop&w=700&q=80"
-            ),
-            Book(
-                title="Introduction to Algorithms (CLRS)",
-                author="Thomas H. Cormen, Charles E. Leiserson",
-                category_id=c_algo.id,
-                supplier_id=s_pearson.id,
-                price=950.0,
-                stock=4,  # Low stock test case
-                min_stock_alert=5,
-                rating=4.9,
-                reviews_count=215,
-                description="Comprehensive textbook covering a broad spectrum of algorithms in depth, asymptotic analysis, dynamic programming, and greedy methods.",
-                image_url="https://images.unsplash.com/photo-1589829085413-56de8ae18c73?auto=format&fit=crop&w=700&q=80"
-            ),
-            Book(
-                title="The Psychology of Money",
-                author="Morgan Housel",
-                category_id=c_fin.id,
-                supplier_id=s_oreilly.id,
-                price=399.0,
-                stock=22,
-                min_stock_alert=8,
-                rating=4.8,
-                reviews_count=180,
-                description="Timeless lessons on wealth, greed, and happiness. Doing well with money isn't necessarily about what you know, but how you behave.",
-                image_url="https://images.unsplash.com/photo-1553729459-efe14ef6055d?auto=format&fit=crop&w=700&q=80"
-            )
-        ]
-        db.session.add_all(books_data)
-        db.session.commit()
+    catalog_books = [
+        # Original core collection
+        {
+            "title": "Software Engineering: A Practitioner's Approach",
+            "author": "Roger S. Pressman",
+            "category_id": c_eng.id if c_eng else 1,
+            "supplier_id": s_mcgraw.id if s_mcgraw else None,
+            "price": 500.0,
+            "stock": 18,
+            "min_stock_alert": 10,
+            "rating": 4.9,
+            "reviews_count": 128,
+            "description": "Comprehensive guide covering agile development, software architecture, quality assurance, requirement gathering, and cost estimation.",
+            "image_url": "https://images.unsplash.com/photo-1532012164546-f432f2e3777a?auto=format&fit=crop&w=700&q=80"
+        },
+        {
+            "title": "Clean Code: A Handbook of Agile Software Craftsmanship",
+            "author": "Robert C. Martin",
+            "category_id": c_prog.id if c_prog else 2,
+            "supplier_id": s_pearson.id if s_pearson else None,
+            "price": 650.0,
+            "stock": 25,
+            "min_stock_alert": 8,
+            "rating": 4.8,
+            "reviews_count": 94,
+            "description": "Even bad code can function. But if code isn't clean, it can bring a development team to its knees. Master formatting, refactoring, and clean design.",
+            "image_url": "https://images.unsplash.com/photo-1516979187457-637abb4f9353?auto=format&fit=crop&w=700&q=80"
+        },
+        {
+            "title": "Design Patterns: Elements of Reusable Object-Oriented Software",
+            "author": "Erich Gamma, Richard Helm, Ralph Johnson, John Vlissides",
+            "category_id": c_eng.id if c_eng else 1,
+            "supplier_id": s_pearson.id if s_pearson else None,
+            "price": 720.0,
+            "stock": 12,
+            "min_stock_alert": 5,
+            "rating": 4.9,
+            "reviews_count": 86,
+            "description": "Capturing a wealth of experience about the design of object-oriented software, four top-notch designers present a catalog of timeless architectural solutions.",
+            "image_url": "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=700&q=80"
+        },
+        {
+            "title": "Artificial Intelligence: A Modern Approach",
+            "author": "Stuart Russell, Peter Norvig",
+            "category_id": c_cs.id if c_cs else 3,
+            "supplier_id": s_pearson.id if s_pearson else None,
+            "price": 850.0,
+            "stock": 15,
+            "min_stock_alert": 5,
+            "rating": 4.9,
+            "reviews_count": 110,
+            "description": "The definitive textbook on AI, exploring intelligent agents, heuristic search, logic, probabilistic reasoning, and modern deep learning foundations.",
+            "image_url": "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=700&q=80"
+        },
+        {
+            "title": "Atomic Habits: An Easy & Proven Way to Build Good Habits",
+            "author": "James Clear",
+            "category_id": c_self.id if c_self else 6,
+            "supplier_id": s_oreilly.id if s_oreilly else None,
+            "price": 450.0,
+            "stock": 30,
+            "min_stock_alert": 10,
+            "rating": 4.9,
+            "reviews_count": 350,
+            "description": "An easy and proven way to build good habits and break bad ones. Transform your daily routines with remarkable atomic changes.",
+            "image_url": "https://images.unsplash.com/photo-1544947950-fa07a98d237f?auto=format&fit=crop&w=700&q=80"
+        },
+        {
+            "title": "Database System Concepts",
+            "author": "Abraham Silberschatz, Henry F. Korth",
+            "category_id": c_db.id if c_db else 5,
+            "supplier_id": s_mcgraw.id if s_mcgraw else None,
+            "price": 580.0,
+            "stock": 6,
+            "min_stock_alert": 10,
+            "rating": 4.7,
+            "reviews_count": 73,
+            "description": "Fundamental concepts of database management, SQL, relational calculus, transaction processing, indexing, and storage engines.",
+            "image_url": "https://images.unsplash.com/photo-1512820790803-83ca734da794?auto=format&fit=crop&w=700&q=80"
+        },
+        {
+            "title": "Introduction to Algorithms (CLRS)",
+            "author": "Thomas H. Cormen, Charles E. Leiserson",
+            "category_id": c_algo.id if c_algo else 4,
+            "supplier_id": s_pearson.id if s_pearson else None,
+            "price": 950.0,
+            "stock": 4,
+            "min_stock_alert": 5,
+            "rating": 4.9,
+            "reviews_count": 215,
+            "description": "Comprehensive textbook covering a broad spectrum of algorithms in depth, asymptotic analysis, dynamic programming, and greedy methods.",
+            "image_url": "https://images.unsplash.com/photo-1589829085413-56de8ae18c73?auto=format&fit=crop&w=700&q=80"
+        },
+        {
+            "title": "The Psychology of Money",
+            "author": "Morgan Housel",
+            "category_id": c_fin.id if c_fin else 7,
+            "supplier_id": s_oreilly.id if s_oreilly else None,
+            "price": 399.0,
+            "stock": 22,
+            "min_stock_alert": 8,
+            "rating": 4.8,
+            "reviews_count": 180,
+            "description": "Timeless lessons on wealth, greed, and happiness. Doing well with money isn't necessarily about what you know, but how you behave.",
+            "image_url": "https://images.unsplash.com/photo-1553729459-efe14ef6055d?auto=format&fit=crop&w=700&q=80"
+        },
+
+        # Newly added books with curated high-res covers
+        {
+            "title": "The Pragmatic Programmer: Your Journey to Mastery",
+            "author": "David Thomas, Andrew Hunt",
+            "category_id": c_prog.id if c_prog else 2,
+            "supplier_id": s_pearson.id if s_pearson else None,
+            "price": 680.0,
+            "stock": 16,
+            "min_stock_alert": 6,
+            "rating": 4.9,
+            "reviews_count": 142,
+            "description": "One of the most significant books in computer programming. Fresh advice on career paths, software architecture, refactoring, and personal development.",
+            "image_url": "https://images.unsplash.com/photo-1507842229451-7971b32c6328?auto=format&fit=crop&w=700&q=80"
+        },
+        {
+            "title": "Grokking Algorithms: An Illustrated Guide",
+            "author": "Aditya Y. Bhargava",
+            "category_id": c_algo.id if c_algo else 4,
+            "supplier_id": s_oreilly.id if s_oreilly else None,
+            "price": 520.0,
+            "stock": 20,
+            "min_stock_alert": 7,
+            "rating": 4.8,
+            "reviews_count": 230,
+            "description": "A friendly, fully illustrated guide that teaches you how to apply common algorithms to practical programming problems with visual breakdowns.",
+            "image_url": "https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?auto=format&fit=crop&w=700&q=80"
+        },
+        {
+            "title": "Designing Data-Intensive Applications",
+            "author": "Martin Kleppmann",
+            "category_id": c_db.id if c_db else 5,
+            "supplier_id": s_oreilly.id if s_oreilly else None,
+            "price": 890.0,
+            "stock": 14,
+            "min_stock_alert": 5,
+            "rating": 4.9,
+            "reviews_count": 310,
+            "description": "The definitive guide to distributed architectures, replication, partitioning, stream processing, consistency, and scalable cloud databases.",
+            "image_url": "https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?auto=format&fit=crop&w=700&q=80"
+        },
+        {
+            "title": "Computer Networking: A Top-Down Approach",
+            "author": "James Kurose, Keith Ross",
+            "category_id": c_cs.id if c_cs else 3,
+            "supplier_id": s_pearson.id if s_pearson else None,
+            "price": 790.0,
+            "stock": 11,
+            "min_stock_alert": 6,
+            "rating": 4.7,
+            "reviews_count": 88,
+            "description": "Focuses on internet protocols, application layers, routing, wireless networks, network security, and modern cloud transport layers.",
+            "image_url": "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=700&q=80"
+        },
+        {
+            "title": "Deep Learning",
+            "author": "Ian Goodfellow, Yoshua Bengio, Aaron Courville",
+            "category_id": c_cs.id if c_cs else 3,
+            "supplier_id": s_oxford.id if s_oxford else None,
+            "price": 999.0,
+            "stock": 8,
+            "min_stock_alert": 4,
+            "rating": 4.9,
+            "reviews_count": 165,
+            "description": "An essential mathematical and conceptual text covering neural networks, optimization algorithms, autoencoders, computer vision, and NLP.",
+            "image_url": "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=700&q=80"
+        },
+        {
+            "title": "Refactoring: Improving the Design of Existing Code",
+            "author": "Martin Fowler",
+            "category_id": c_prog.id if c_prog else 2,
+            "supplier_id": s_pearson.id if s_pearson else None,
+            "price": 740.0,
+            "stock": 19,
+            "min_stock_alert": 5,
+            "rating": 4.8,
+            "reviews_count": 78,
+            "description": "Learn how to systematically refactor legacy codebases safely with unit tests, clean abstractions, and proven architectural principles.",
+            "image_url": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=700&q=80"
+        },
+        {
+            "title": "Zero to One: Notes on Startups",
+            "author": "Peter Thiel, Blake Masters",
+            "category_id": c_fin.id if c_fin else 7,
+            "supplier_id": s_mcgraw.id if s_mcgraw else None,
+            "price": 420.0,
+            "stock": 28,
+            "min_stock_alert": 10,
+            "rating": 4.7,
+            "reviews_count": 195,
+            "description": "How to build companies that create entirely new things. The secrets of monopolistic innovation, vertical growth, and visionary technology.",
+            "image_url": "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=700&q=80"
+        },
+        {
+            "title": "Deep Work: Rules for Focused Success in a Distracted World",
+            "author": "Cal Newport",
+            "category_id": c_self.id if c_self else 6,
+            "supplier_id": s_oxford.id if s_oxford else None,
+            "price": 460.0,
+            "stock": 24,
+            "min_stock_alert": 8,
+            "rating": 4.8,
+            "reviews_count": 210,
+            "description": "Master the superpower of distraction-free concentration to produce elite results, sharpen skills, and achieve genuine fulfillment.",
+            "image_url": "https://images.unsplash.com/photo-1499750310107-5fef28a66643?auto=format&fit=crop&w=700&q=80"
+        }
+    ]
+
+    for b_item in catalog_books:
+        existing = Book.query.filter_by(title=b_item["title"]).first()
+        if not existing:
+            db.session.add(Book(**b_item))
+
+    db.session.commit()
 
     # 5. Seed Initial Sample Orders for Reports if none exist
     if Order.query.count() == 0:
