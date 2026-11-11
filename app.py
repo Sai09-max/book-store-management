@@ -278,7 +278,7 @@ def init_db():
             "rating": 4.9,
             "reviews_count": 128,
             "description": "Comprehensive guide covering agile development, software architecture, quality assurance, requirement gathering, and cost estimation.",
-            "image_url": "https://images.unsplash.com/photo-1532012164546-f432f2e3777a?auto=format&fit=crop&w=700&q=80"
+            "image_url": "https://m.media-amazon.com/images/S/compressed.photo.goodreads.com/books/1387717052i/142783.jpg"
         },
         {
             "title": "Clean Code: A Handbook of Agile Software Craftsmanship",
@@ -317,7 +317,7 @@ def init_db():
             "rating": 4.9,
             "reviews_count": 110,
             "description": "The definitive textbook on AI, exploring intelligent agents, heuristic search, logic, probabilistic reasoning, and modern deep learning foundations.",
-            "image_url": "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=700&q=80"
+            "image_url": "https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=700&q=80"
         },
         {
             "title": "Atomic Habits: An Easy & Proven Way to Build Good Habits",
@@ -384,7 +384,7 @@ def init_db():
             "rating": 4.9,
             "reviews_count": 142,
             "description": "One of the most significant books in computer programming. Fresh advice on career paths, software architecture, refactoring, and personal development.",
-            "image_url": "https://images.unsplash.com/photo-1507842229451-7971b32c6328?auto=format&fit=crop&w=700&q=80"
+            "image_url": "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&w=700&q=80"
         },
         {
             "title": "Grokking Algorithms: An Illustrated Guide",
@@ -483,6 +483,10 @@ def init_db():
         existing = Book.query.filter_by(title=b_item["title"]).first()
         if not existing:
             db.session.add(Book(**b_item))
+        else:
+            # Sync cover image URL if it changed or was empty
+            if existing.image_url != b_item["image_url"] and (not existing.image_url or existing.image_url.startswith('http') or existing.image_url.startswith('/static/uploads/-resized')):
+                existing.image_url = b_item["image_url"]
 
     db.session.commit()
 
