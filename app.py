@@ -773,7 +773,23 @@ def cart():
 
     # Billing Calculation Specification (Section 4.3):
     # Net Amount = (Price x Quantity) - Discount + Tax
-    discount_pct = 5.0 if subtotal >= 1000 else 0.0
+    # Standard Campus Discount: 5% on orders >= 1000 (preserves TC06: 1000 subtotal -> 5% disc = 50 -> 5% tax = 47.5 -> 997.50)
+    # Tiered Special Discount:
+    # >= ₹1500 -> 10%
+    # >= ₹1000 -> 5%
+    if subtotal >= 1500:
+        discount_pct = 10.0
+        amount_needed_for_next = 0.0
+        next_discount_label = "Maximum 10% Mega Discount applied!"
+    elif subtotal >= 1000:
+        discount_pct = 5.0
+        amount_needed_for_next = 1500.0 - subtotal
+        next_discount_label = f"Add ₹{amount_needed_for_next:.2f} more to unlock 10% Mega Discount!"
+    else:
+        discount_pct = 0.0
+        amount_needed_for_next = 1000.0 - subtotal
+        next_discount_label = f"Add ₹{amount_needed_for_next:.2f} more to unlock 5% Campus Discount!"
+
     discount_amount = (subtotal * discount_pct) / 100.0
     tax_amount = (subtotal - discount_amount) * 0.05
     total = (subtotal - discount_amount) + tax_amount
@@ -835,7 +851,8 @@ def cart():
         discount_pct=discount_pct,
         tax_amount=tax_amount,
         total=total,
-        amount_needed_for_discount=max(0.0, 1000.0 - subtotal)
+        amount_needed_for_next=amount_needed_for_next,
+        next_discount_label=next_discount_label
     )
 
 

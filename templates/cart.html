@@ -16,24 +16,40 @@
 <div class="row g-4">
     <!-- Left: Cart Items List -->
     <div class="col-lg-8">
-        <!-- Academic Discount Progress Alert -->
-        {% if amount_needed_for_discount > 0 %}
-            <div class="alert alert-warning border-0 rounded-4 shadow-sm mb-4 d-flex align-items-center gap-3">
-                <i class="bi bi-tag-fill fs-3 text-warning"></i>
+        <!-- Dynamic Discount Tier Alert Banner -->
+        {% if discount_pct >= 10 %}
+            <div class="alert alert-success border-0 rounded-4 shadow-sm mb-4 d-flex align-items-center gap-3">
+                <i class="bi bi-patch-check-fill fs-2 text-success"></i>
+                <div class="flex-grow-1">
+                    <span class="fw-bold d-block">🎉 Maximum 10% Mega Campus Discount Applied!</span>
+                    <small class="text-muted">You saved ₹{{ "%.2f"|format(discount_amount) }} on this order.</small>
+                </div>
+            </div>
+        {% elif discount_pct >= 5 %}
+            <div class="alert alert-info border-0 rounded-4 shadow-sm mb-4 d-flex align-items-center gap-3">
+                <i class="bi bi-tag-fill fs-2 text-info"></i>
                 <div class="flex-grow-1">
                     <div class="d-flex justify-content-between small fw-bold mb-1">
-                        <span>Unlock 5% Academic Discount</span>
-                        <span>Add ₹{{ "%.2f"|format(amount_needed_for_discount) }} more</span>
+                        <span>5% Campus Discount Active! Upgrade to 10%</span>
+                        <span class="text-primary">Add ₹{{ "%.2f"|format(amount_needed_for_next) }} more</span>
                     </div>
-                    <div class="progress" style="height: 6px;">
-                        <div class="progress-bar bg-warning" role="progressbar" style="width: {{ (subtotal / 1000.0) * 100 }}%;"></div>
+                    <div class="progress" style="height: 8px;">
+                        <div class="progress-bar bg-primary" role="progressbar" style="width: {{ (subtotal / 1500.0) * 100 }}%;"></div>
                     </div>
                 </div>
             </div>
         {% else %}
-            <div class="alert alert-success border-0 rounded-4 shadow-sm mb-4 d-flex align-items-center gap-2">
-                <i class="bi bi-check-circle-fill fs-4 text-success"></i>
-                <span class="fw-semibold">Congratulations! You unlocked the 5% Special Discount on this order!</span>
+            <div class="alert alert-warning border-0 rounded-4 shadow-sm mb-4 d-flex align-items-center gap-3">
+                <i class="bi bi-stars fs-2 text-warning"></i>
+                <div class="flex-grow-1">
+                    <div class="d-flex justify-content-between small fw-bold mb-1">
+                        <span>Unlock 5% Campus Discount on orders ≥ ₹1,000</span>
+                        <span class="text-dark">Add ₹{{ "%.2f"|format(amount_needed_for_next) }} more</span>
+                    </div>
+                    <div class="progress" style="height: 8px;">
+                        <div class="progress-bar bg-warning" role="progressbar" style="width: {{ (subtotal / 1000.0) * 100 }}%;"></div>
+                    </div>
+                </div>
             </div>
         {% endif %}
 

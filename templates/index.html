@@ -100,8 +100,8 @@
         <i class="bi bi-tag-fill" style="color:#059669;"></i>
       </div>
       <div>
-        <div class="fw-bold small">Campus Discount</div>
-        <div class="text-muted" style="font-size:.74rem;">5% off on orders ≥ ₹1,000</div>
+        <div class="fw-bold small">Campus Discounts</div>
+        <div class="text-muted" style="font-size:.74rem;">5% off ₹1,000+ &bull; 10% off ₹1,500+</div>
       </div>
     </div>
   </div>
@@ -259,7 +259,10 @@
         <div class="book-footer">
           <div>
             <div class="book-price-label">Campus Price</div>
-            <div class="book-price">₹{{ "%.2f"|format(book.price) }}</div>
+            <div class="d-flex align-items-baseline gap-2">
+              <span class="book-price">₹{{ "%.2f"|format(book.price) }}</span>
+              <span class="badge bg-success-subtle text-success border border-success-subtle" style="font-size:.65rem;font-weight:700;">10% OFF</span>
+            </div>
           </div>
           <div class="d-flex gap-2 align-items-center">
             {% if book.stock > 0 %}
