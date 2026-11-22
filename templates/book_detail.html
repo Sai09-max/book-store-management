@@ -41,6 +41,20 @@
                     </span>
                     
                     {% if book.stock > 0 %}
+    <span class="badge bg-success-subtle text-success border px-3 py-1 rounded-pill fw-semibold">
+        <i class="bi bi-check2-circle me-1"></i> Available ({{ book.stock }} units in stock)
+    </span>
+{% else %}
+    <span class="badge bg-danger-subtle text-danger border px-3 py-1 rounded-pill fw-semibold">
+        <i class="bi bi-x-circle me-1"></i> Out of Stock
+    </span>
+    <!-- Remainder button for out‑of‑stock books -->
+    <form method="post" action="{{ url_for('add_remainder', book_id=book.id) }}" class="d-inline ms-2">
+        <button type="submit" class="btn btn-outline-primary btn-sm rounded-pill">
+            <i class="bi bi-bell"></i> Remainder
+        </button>
+    </form>
+{% endif %}
                         <span class="badge {% if book.is_low_stock %}bg-warning-subtle text-warning border-warning{% else %}bg-success-subtle text-success border-success{% endif %} border px-3 py-1 rounded-pill fw-semibold">
                             <i class="bi bi-check2-circle me-1"></i> Available ({{ book.stock }} units in stock)
                         </span>
@@ -90,6 +104,20 @@
 
                 <!-- Purchase / Cart Action Form -->
                 {% if book.stock > 0 %}
+    <span class="badge bg-success-subtle text-success border px-3 py-1 rounded-pill fw-semibold">
+        <i class="bi bi-check2-circle me-1"></i> Available ({{ book.stock }} units in stock)
+    </span>
+{% else %}
+    <span class="badge bg-danger-subtle text-danger border px-3 py-1 rounded-pill fw-semibold">
+        <i class="bi bi-x-circle me-1"></i> Out of Stock
+    </span>
+    <!-- Remainder button for out‑of‑stock books -->
+    <form method="post" action="{{ url_for('add_remainder', book_id=book.id) }}" class="d-inline ms-2">
+        <button type="submit" class="btn btn-outline-primary btn-sm rounded-pill">
+            <i class="bi bi-bell"></i> Remainder
+        </button>
+    </form>
+{% endif %}
                     <form method="post" class="mt-4 pt-3 border-top">
                         {{ form.hidden_tag() }}
                         <div class="row g-3 align-items-end">

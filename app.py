@@ -62,6 +62,110 @@ def role_required(*allowed_roles):
 # ---------------------------------------------------------------------------
 # Database Models
 # ---------------------------------------------------------------------------
+
+class User(UserMixin, db.Model):
+    __tablename__ = 'users'
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(80), unique=True, nullable=False)
+    email = db.Column(db.String(120), unique=True, nullable=False)
+    password_hash = db.Column(db.String(255), nullable=False)
+    role = db.Column(db.String(20), default='customer', nullable=False)  # admin, manager, staff, customer
+    phone = db.Column(db.String(20), nullable=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    points = db.Column(db.Integer, default=0)  # loyalty points (optional)
+    # relationship to stock remainder notifications
+    remainders = db.relationship('StockRemainder', backref='user', lazy='dynamic')
+    
+    @property
+    def is_admin(self):
+        return self.role == 'admin'
+    
+    @property
+    def is_manager(self):
+        return self.role in ('admin', 'manager')
+    
+    @property
+    def is_staff(self):
+        return self.role in ('admin', 'manager', 'staff')
+    
+    def set_password(self, password):
+        self.password_hash = generate_password_hash(password)
+    
+    def check_password(self, password):
+        return check_password_hash(self.password_hash, password)
+
+# Existing models (Category, Supplier, Book, Order, OrderItem, BookReturn, BookReview) remain unchanged
+
+# ---------------------------------------------------------------------------
+# New model: Stock Remainder (notification when out‑of‑stock book is restocked)
+# ---------------------------------------------------------------------------
+class StockRemainder(db.Model):
+    __tablename__ = 'stock_remainders'
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    book_id = db.Column(db.Integer, db.ForeignKey('books.id'), nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    notified = db.Column(db.Boolean, default=False)
+    # relationship to book
+    book = db.relationship('Book', backref=db.backref('remainders', lazy='dynamic'))
+
+# ---------------------------------------------------------------------------
+# Helper: notify users when a book is restocked
+# ---------------------------------------------------------------------------
+def notify_remainders(book_id):
+    """Mark all pending remainder requests for a given book as notified.
+    For simplicity we just flash a message; in a real app you could send email.
+    """
+    pending = StockRemainder.query.filter_by(book_id=book_id, notified=False).all()
+    for r in pending:
+        r.notified = True
+        # Here you could integrate an email/SMS service using r.user.email
+    db.session.commit()
+    return len(pending)
+
+# ---------------------------------------------------------------------------
+# Routes for remainder button and stock increment (admin side)
+# ---------------------------------------------------------------------------
+@app.route('/remainder/<int:book_id>', methods=['POST'])
+@login_required
+def add_remainder(book_id):
+    """Allows a user to request a notification when an out‑of‑stock book is back.
+    The button is shown only when the book stock is 0.
+    """
+    book = Book.query.get_or_404(book_id)
+    if book.stock > 0:
+        flash('Book is already in stock.', 'info')
+        return redirect(url_for('book_detail', book_id=book_id))
+    # Prevent duplicate requests
+    exists = StockRemainder.query.filter_by(user_id=current_user.id, book_id=book_id, notified=False).first()
+    if exists:
+        flash('You have already requested a remainder for this book.', 'warning')
+    else:
+        remainder = StockRemainder(user_id=current_user.id, book_id=book_id)
+        db.session.add(remainder)
+        db.session.commit()
+        flash('We will notify you when this book is restocked.', 'success')
+    return redirect(url_for('book_detail', book_id=book_id))
+
+# Simple admin route to add stock (for demo purposes)
+@app.route('/admin/stock/add/<int:book_id>', methods=['POST'])
+@login_required
+def admin_add_stock(book_id):
+    if not current_user.is_staff:
+        flash('Access denied.', 'danger')
+        return redirect(url_for('index'))
+    book = Book.query.get_or_404(book_id)
+    # Increment stock by a fixed amount (e.g., 10). In a real UI you would accept a quantity.
+    book.stock += 10
+    db.session.commit()
+    # Notify any pending remainder requests
+    notified_count = notify_remainders(book_id)
+    if notified_count:
+        flash(f'Book restocked. Notified {notified_count} user(s) who requested a remainder.', 'success')
+    else:
+        flash('Stock updated.', 'success')
+    return redirect(url_for('book_detail', book_id=book_id))
+
 class User(UserMixin, db.Model):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
