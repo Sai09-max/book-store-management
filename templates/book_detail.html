@@ -55,6 +55,14 @@
         </button>
     </form>
 {% endif %}
+
+{% if current_user.is_staff %}
+<form method="post" action="{{ url_for('admin_add_stock', book_id=book.id) }}" class="d-inline ms-2">
+  <button type="submit" class="btn btn-outline-success btn-sm rounded-pill">
+    <i class="bi bi-plus-circle"></i> Add Stock
+  </button>
+</form>
+{% endif %}
                         <span class="badge {% if book.is_low_stock %}bg-warning-subtle text-warning border-warning{% else %}bg-success-subtle text-success border-success{% endif %} border px-3 py-1 rounded-pill fw-semibold">
                             <i class="bi bi-check2-circle me-1"></i> Available ({{ book.stock }} units in stock)
                         </span>
@@ -117,6 +125,14 @@
             <i class="bi bi-bell"></i> Remainder
         </button>
     </form>
+{% endif %}
+
+{% if current_user.is_staff %}
+<form method="post" action="{{ url_for('admin_add_stock', book_id=book.id) }}" class="d-inline ms-2">
+  <button type="submit" class="btn btn-outline-success btn-sm rounded-pill">
+    <i class="bi bi-plus-circle"></i> Add Stock
+  </button>
+</form>
 {% endif %}
                     <form method="post" class="mt-4 pt-3 border-top">
                         {{ form.hidden_tag() }}
