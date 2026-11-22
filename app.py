@@ -206,9 +206,12 @@ def init_db():
     """Initializes tables and populates default categories, suppliers, books, and accounts."""
     db.create_all()
 
-    # 1. Seed Roles & Default Accounts (Admin only)
+    # 1. Seed Roles & Default Accounts
     default_users = [
         ('admin', 'admin@bookstore.com', 'admin123', 'admin'),
+        ('staff1', 'staff1@bookstore.com', 'staff123', 'staff'),
+        ('staff2', 'staff2@bookstore.com', 'staff123', 'staff'),
+        ('staff3', 'staff3@bookstore.com', 'staff123', 'staff'),
     ]
     for uname, email, pwd, role in default_users:
         user = User.query.filter_by(username=uname).first()
@@ -216,9 +219,6 @@ def init_db():
             user = User(username=uname, email=email, role=role)
             user.set_password(pwd)
             db.session.add(user)
-
-    # Keep only the admin account; remove any other default/demo users
-    User.query.filter(User.username != 'admin').delete(synchronize_session=False)
 
     db.session.commit()
 
