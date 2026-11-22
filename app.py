@@ -166,34 +166,6 @@ def admin_add_stock(book_id):
         flash('Stock updated.', 'success')
     return redirect(url_for('book_detail', book_id=book_id))
 
-class User(UserMixin, db.Model):
-    __tablename__ = 'users'
-    id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(80), unique=True, nullable=False)
-    email = db.Column(db.String(120), unique=True, nullable=False)
-    password_hash = db.Column(db.String(255), nullable=False)
-    role = db.Column(db.String(20), default='customer', nullable=False)  # admin, manager, staff, customer
-    phone = db.Column(db.String(20), nullable=True)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
-
-    @property
-    def is_admin(self):
-        return self.role == 'admin'
-
-    @property
-    def is_manager(self):
-        return self.role in ('admin', 'manager')
-
-    @property
-    def is_staff(self):
-        return self.role in ('admin', 'manager', 'staff')
-
-    def set_password(self, password):
-        self.password_hash = generate_password_hash(password)
-
-    def check_password(self, password):
-        return check_password_hash(self.password_hash, password)
-
 
 class Category(db.Model):
     __tablename__ = 'categories'
