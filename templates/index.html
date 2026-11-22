@@ -231,6 +231,11 @@
           <a href="{{ url_for('book_detail', book_id=book.id) }}" class="btn-quick-view">
             <i class="bi bi-eye"></i> Quick View
           </a>
+          <form action="{{ url_for('wishlist_toggle', book_id=book.id) }}" method="POST" class="d-inline ms-2">
+            <button type="submit" class="btn btn-light rounded-circle p-2 shadow-sm text-danger" title="Save to Wishlist">
+              <i class="bi bi-heart{% if book.id in wishlist_items %}-fill{% endif %}"></i>
+            </button>
+          </form>
         </div>
       </div>
 

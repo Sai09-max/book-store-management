@@ -191,6 +191,19 @@ class BookReturn(db.Model):
     book = db.relationship('Book')
 
 
+class BookReview(db.Model):
+    __tablename__ = 'book_reviews'
+    id = db.Column(db.Integer, primary_key=True)
+    book_id = db.Column(db.Integer, db.ForeignKey('books.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
+    reviewer_name = db.Column(db.String(100), nullable=False)
+    rating = db.Column(db.Integer, default=5, nullable=False)
+    comment = db.Column(db.Text, nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    book = db.relationship('Book', backref=db.backref('reviews', cascade='all, delete-orphan', lazy='dynamic'))
+
+
 # ---------------------------------------------------------------------------
 # Login Manager Loader
 # ---------------------------------------------------------------------------
@@ -642,7 +655,38 @@ def book_detail(book_id):
         session.modified = True
         flash(f'Added {qty} copy/copies of "{book.title}" to cart.', 'success')
         return redirect(url_for('cart'))
-    return render_template('book_detail.html', book=book, form=form)
+    reviews = BookReview.query.filter_by(book_id=book.id).order_by(BookReview.created_at.desc()).all()
+    return render_template('book_detail.html', book=book, form=form, reviews=reviews)
+
+
+@app.route('/book/<int:book_id>/review', methods=['POST'])
+def add_review(book_id):
+    book = Book.query.get_or_404(book_id)
+    rating = int(request.form.get('rating', 5))
+    comment = request.form.get('comment', '').strip()
+    reviewer = current_user.username if current_user.is_authenticated else (request.form.get('reviewer_name', '').strip() or 'Anonymous Reader')
+
+    if not comment:
+        flash('Please write a short review before submitting.', 'warning')
+        return redirect(url_for('book_detail', book_id=book.id))
+
+    new_rev = BookReview(
+        book_id=book.id,
+        user_id=current_user.id if current_user.is_authenticated else None,
+        reviewer_name=reviewer,
+        rating=max(1, min(5, rating)),
+        comment=comment
+    )
+    db.session.add(new_rev)
+    # Recalculate book rating & reviews count
+    all_revs = BookReview.query.filter_by(book_id=book.id).all()
+    new_count = len(all_revs) + 1
+    new_avg = round((sum(r.rating for r in all_revs) + rating) / new_count, 1)
+    book.rating = new_avg
+    book.reviews_count = (book.reviews_count or 0) + 1
+    db.session.commit()
+    flash('Thank you! Your verified review has been published.', 'success')
+    return redirect(url_for('book_detail', book_id=book.id))
 
 
 # ---------------------------------------------------------------------------
@@ -790,9 +834,17 @@ def cart():
         amount_needed_for_next = 1000.0 - subtotal
         next_discount_label = f"Add ₹{amount_needed_for_next:.2f} more to unlock 5% Campus Discount!"
 
-    discount_amount = (subtotal * discount_pct) / 100.0
-    tax_amount = (subtotal - discount_amount) * 0.05
-    total = (subtotal - discount_amount) + tax_amount
+    # Coupon Promo Code Support
+    applied_coupon = session.get('coupon_code', '')
+    coupon_discount = 0.0
+    if applied_coupon == 'WELCOME10':
+        coupon_discount = min(100.0, subtotal * 0.10)
+    elif applied_coupon == 'CAMPUS50':
+        coupon_discount = 50.0
+
+    discount_amount = ((subtotal * discount_pct) / 100.0) + coupon_discount
+    tax_amount = max(0.0, (subtotal - discount_amount)) * 0.05
+    total = max(0.0, (subtotal - discount_amount)) + tax_amount
 
     if request.method == 'POST':
         if not items:
@@ -1358,7 +1410,30 @@ def customer_orders():
 def inject_cart_count():
     cart_data = get_cart()
     total_qty = sum(cart_data.values()) if cart_data else 0
-    return dict(cart_count=total_qty)
+    wishlist = session.get('wishlist', [])
+    return dict(cart_count=total_qty, wishlist_count=len(wishlist), wishlist_items=wishlist)
+
+
+@app.route('/wishlist')
+def wishlist():
+    wishlist_ids = session.get('wishlist', [])
+    books = Book.query.filter(Book.id.in_(wishlist_ids)).all() if wishlist_ids else []
+    return render_template('wishlist.html', books=books)
+
+
+@app.route('/wishlist/toggle/<int:book_id>', methods=['POST'])
+def wishlist_toggle(book_id):
+    book = Book.query.get_or_404(book_id)
+    wishlist = session.get('wishlist', [])
+    if book.id in wishlist:
+        wishlist.remove(book.id)
+        flash(f'Removed "{book.title}" from your wishlist.', 'info')
+    else:
+        wishlist.append(book.id)
+        flash(f'Added "{book.title}" to your wishlist! ❤️', 'success')
+    session['wishlist'] = wishlist
+    session.modified = True
+    return redirect(request.referrer or url_for('index'))
 
 
 # ---------------------------------------------------------------------------

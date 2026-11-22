@@ -9,7 +9,10 @@
     </div>
     <div class="d-flex gap-2">
         <button onclick="window.print()" class="btn btn-primary rounded-pill px-4 fw-bold shadow-sm">
-            <i class="bi bi-printer-fill me-1"></i> Print Invoice
+            <i class="bi bi-printer-fill me-1"></i> Print / PDF
+        </button>
+        <button onclick="printThermal()" class="btn btn-dark rounded-pill px-3 fw-bold shadow-sm">
+            <i class="bi bi-receipt me-1"></i> Thermal Receipt
         </button>
         {% if current_user.is_authenticated and current_user.is_staff %}
             <a href="{{ url_for('staff_pos') }}" class="btn btn-warning rounded-pill px-4 fw-bold">
@@ -182,4 +185,58 @@
         <span class="badge bg-light text-secondary border font-monospace">Official Computer-Generated Receipt &bull; Book Store Management System</span>
     </div>
 </div>
+
+<script>
+function printThermal() {
+    const w = window.open('', '_blank', 'width=380,height=600');
+    w.document.write(`
+        <html>
+        <head>
+            <title>Receipt - {{ order.invoice_no }}</title>
+            <style>
+                body { font-family: 'Courier New', monospace; width: 280px; margin: 10px auto; font-size: 12px; color: #000; }
+                .center { text-align: center; }
+                .bold { font-weight: bold; }
+                .line { border-bottom: 1px dashed #000; margin: 8px 0; }
+                table { width: 100%; font-size: 11px; }
+                .right { text-align: right; }
+            </style>
+        </head>
+        <body onload="window.print(); window.close();">
+            <div class="center bold" style="font-size:14px;">BOOKSTORE OS</div>
+            <div class="center">Campus Book Center &bull; Station 101</div>
+            <div class="center">GSTIN: 29AABCU9603R1ZX</div>
+            <div class="line"></div>
+            <div>Invoice: {{ order.invoice_no }}</div>
+            <div>Date: {{ order.created_at.strftime('%d/%m/%Y %I:%M %p') }}</div>
+            <div>Customer: {{ order.customer_name }}</div>
+            <div>Payment: {{ order.payment_method }}</div>
+            <div class="line"></div>
+            <table>
+                <tr class="bold"><td>Item</td><td class="center">Qty</td><td class="right">Amt</td></tr>
+                {% for item in order.items %}
+                <tr>
+                    <td>{{ item.book_title[:15] }}</td>
+                    <td class="center">{{ item.quantity }}</td>
+                    <td class="right">₹{{ "%.2f"|format(item.subtotal) }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+            <div class="line"></div>
+            <table>
+                <tr><td>Gross:</td><td class="right">₹{{ "%.2f"|format(order.subtotal) }}</td></tr>
+                <tr><td>Discount ({{ order.discount_pct }}%):</td><td class="right">-₹{{ "%.2f"|format(order.discount_amount) }}</td></tr>
+                <tr><td>Tax (GST 5%):</td><td class="right">+₹{{ "%.2f"|format(order.tax_amount) }}</td></tr>
+                <tr class="bold" style="font-size:13px;"><td>NET TOTAL:</td><td class="right">₹{{ "%.2f"|format(order.net_amount) }}</td></tr>
+            </table>
+            <div class="line"></div>
+            <div class="center bold">THANK YOU FOR YOUR VISIT!</div>
+            <div class="center" style="font-size:10px;">Return within 7 days with bill.</div>
+            <div class="center" style="margin-top:10px; font-family:monospace; font-size:18px; letter-spacing:4px;">||| | |||| || ||| ||</div>
+        </body>
+        </html>
+    `);
+    w.document.close();
+}
+</script>
 {% endblock %}
