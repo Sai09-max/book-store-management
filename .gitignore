@@ -12,9 +12,11 @@ __pycache__/
 
 # Instance & Database files (keep repo clean)
 instance/
+# Database files – ignore all .db except app.db
 *.db
+!app.db
 
-# Uploaded media (optional, or keep if you want placeholder uploads tracked)
+# Uploaded media
 static/uploads/*
 !static/uploads/.gitkeep
 
